@@ -13,7 +13,6 @@ export const getAllPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    console.log('Parsed ID:', id);
     if (isNaN(id)) {
       return res.status(400).json({ message: 'Bad Request: Invalid ID' });
     }
@@ -31,7 +30,6 @@ export const getPostById = async (req, res) => {
 
 export const createPost = async (req, res) => {
   try {
-    console.log('Request Body:', req.body);
     const newPost = await postService.create(req.body);
     res.status(201).json(newPost);
   } catch (err) {
@@ -63,7 +61,6 @@ export const updatePost = async (req, res) => {
       return res.status(400).json({ message: 'Bad Request: Invalid ID' });
 
     const updatedPost = await postService.updateById(id, req.body);
-    console.log('Updated Post:', updatedPost);
     if (!updatedPost)
       return res.status(404).json({ message: 'Post Not Found' });
 

@@ -46,7 +46,6 @@ export const deleteById = async (id) => {
 
 export const updateById = async (id, data) => {
   const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
-  console.log(rows);
   if (rows.length === 0) return null;
 
   const { title, desc, img } = data;
