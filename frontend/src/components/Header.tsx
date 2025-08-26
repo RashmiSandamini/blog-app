@@ -13,18 +13,23 @@ export default function Header({
 }: HeaderProps) {
   return (
     <div className='shadow-md rounded-3xl bg-white'>
-      <header className='w-full flex items-center justify-between py-4 p-10'>
+      <header className='w-full flex items-center justify-between sm:py-4 sm:p-10 py-3 p-5'>
         <div>
-          <img src='/logo.svg' alt='logo' className='w-16 cursor-pointer' />
+          <img
+            src='/logo.svg'
+            alt='logo'
+            className='w-16 cursor-pointer max-w-xs'
+          />
         </div>
 
         <nav className='flex items-center'>
           <ul className='flex gap-12 text-md items-center'>
-            <li className='cursor-pointer hover:text-primary'>
+            <li className='hidden md:block hover:text-primary'>
               <button
                 onClick={() => {
                   openWriteDialog();
                 }}
+                className='cursor-pointer '
               >
                 Write
               </button>
@@ -32,7 +37,7 @@ export default function Header({
             <li>
               <button
                 onClick={() => setIsSignInOpen(true)}
-                className='cursor-pointer'
+                className='hidden sm:block cursor-pointer '
               >
                 Login
               </button>

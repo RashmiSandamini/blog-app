@@ -46,9 +46,9 @@ export default function Home() {
         openWriteDialog={openWriteDialog}
         openGetStartedDialog={openGetStartedDialog}
       />
-      <div className='flex items-center mt-12'>
+      <div className='md:flex items-center mt-12'>
         <div className='flex flex-1'>
-          <div className='p-8 flex flex-col gap-5 w-full max-w-xl'>
+          <div className='sm:p-8 flex flex-col gap-5 w-full max-w-xl'>
             <h1 className='text-6xl font-semibold text-gray-800 font-serif leading-tight'>
               Ideas worth sharing.
             </h1>
@@ -57,7 +57,7 @@ export default function Home() {
               meaningful stories that inspire, challenge, and connect us all.
             </p>
             <Button
-              className='w-1/3 rounded-full'
+              className='w-1/3 rounded-full cursor-pointer'
               onClick={() => {
                 setIsSignUpOpen(true);
               }}
@@ -115,7 +115,11 @@ export default function Home() {
           </div>
         </div>
         <div className='flex-1'>
-          <img src='/hero-image.svg' alt='a free girl' className='w-full' />
+          <img
+            src='/hero-image.svg'
+            alt='a free girl'
+            className='w-full hidden md:block'
+          />
         </div>
       </div>
     </>
