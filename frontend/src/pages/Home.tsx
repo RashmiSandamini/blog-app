@@ -3,45 +3,29 @@ import axios from 'axios';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
-  const [userData, setUserData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const token = localStorage.getItem('token');
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+  const { user, loading, token } = useAuth();
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get('http://localhost:3000/api/users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUserData(response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching user data:', error);
-          setLoading(false);
-        });
+    if (!loading && !user) {
+      navigate('/');
+    }
 
+    if (!loading && user && token) {
       axios
         .get('http://localhost:3000/api/posts')
         .then((res) => setPosts(res.data))
-        .catch((err) => console.error('Posts error:', err))
-        .finally(() => setLoading(false));
-    } else {
-      navigate('/');
+        .catch((err) => console.error('Posts error:', err));
     }
-  }, [token]);
+  }, [loading, user, token, navigate]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
-
   return (
     <>
       <div className='shadow-md rounded-3xl bg-white'>
@@ -66,13 +50,12 @@ export default function Home() {
                 <Avatar className='size-10'>
                   <AvatarImage
                     src={
-                      userData?.profilePicture ||
-                      'https://github.com/shadcn.png'
+                      user?.profilePicture || 'https://github.com/shadcn.png'
                     }
                     alt='@shadcn'
                   />
                   <AvatarFallback className='text-xs'>
-                    {userData?.username?.[0]?.toUpperCase()}
+                    {user?.username?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </li>
@@ -83,7 +66,7 @@ export default function Home() {
 
       <div className='mt-10 mx-auto'>
         <h1 className='text-4xl font-semibold mb-4'>
-          Welcome {userData?.username}!
+          Welcome {user?.username}!
         </h1>
       </div>
 

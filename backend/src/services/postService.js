@@ -21,7 +21,7 @@ export const getById = async (id) => {
          posts.*, 
          users.username 
        FROM posts 
-       JOIN users ON posts.id = users.id 
+       JOIN users ON posts.uid = users.id 
        WHERE posts.id = ?`,
       [id]
     );

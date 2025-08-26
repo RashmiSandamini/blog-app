@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const formSchema = z.object({
   email: z.email({ message: 'Enter a valid email address' }),
@@ -15,6 +16,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
+  const { setToken } = useAuth();
   const {
     register,
     handleSubmit,
@@ -35,7 +37,8 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
       );
 
       toast.success('Login successful!');
-      localStorage.setItem('token', response.data.token);
+      const token = response.data.token;
+      setToken(token);
       closeDialog && closeDialog();
       navigate('/home');
     } catch (err: any) {

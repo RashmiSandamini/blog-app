@@ -1,29 +1,31 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 export default function PostDetails() {
   const { id } = useParams();
   const [post, setPost] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
-  const [userData, setUserData] = useState<any>(null);
+  const { user, loading, token } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    if (!loading && !user) {
+      navigate('/');
+      return;
+    }
 
-    const fetchPostAndUser = async () => {
+    const fetchPost = async () => {
       try {
-        const userRes = await axios.get('http://localhost:3000/api/users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUserData(userRes.data);
-
         const postRes = await axios.get(
-          `http://localhost:3000/api/posts/${id}`
+          `http://localhost:3000/api/posts/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ use token from context
+            },
+          }
         );
         setPost(postRes.data);
       } catch (error) {
@@ -38,13 +40,13 @@ export default function PostDetails() {
         }
         setErrorMessage(message);
         setPost(null);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchPostAndUser();
-  }, [id]);
+    if (user && token) {
+      fetchPost();
+    }
+  }, [id, user, token, loading, navigate]);
 
   if (loading) return <div className='text-center mt-10'>Loading...</div>;
   if (!post) return <div className='text-center mt-10'>{errorMessage}</div>;
@@ -73,13 +75,12 @@ export default function PostDetails() {
                 <Avatar className='size-10'>
                   <AvatarImage
                     src={
-                      userData?.profilePicture ||
-                      'https://github.com/shadcn.png'
+                      user?.profilePicture || 'https://github.com/shadcn.png'
                     }
                     alt='@shadcn'
                   />
                   <AvatarFallback className='text-xs'>
-                    {userData?.username?.[0]?.toUpperCase()}
+                    {user?.username?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </li>
@@ -94,13 +95,11 @@ export default function PostDetails() {
           <div>
             <Avatar className='size-10'>
               <AvatarImage
-                src={
-                  userData?.profilePicture || 'https://github.com/shadcn.png'
-                }
+                src={user?.profilePicture || 'https://github.com/shadcn.png'}
                 alt='@shadcn'
               />
               <AvatarFallback className='text-xs'>
-                {userData?.username?.[0]?.toUpperCase()}
+                {post?.username?.[0]?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </div>
