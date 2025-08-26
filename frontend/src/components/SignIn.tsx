@@ -37,7 +37,7 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
       toast.success('Login successful!');
       localStorage.setItem('token', response.data.token);
       closeDialog && closeDialog();
-      navigate('/');
+      navigate('/home');
     } catch (err: any) {
       if (err.response?.status === 401) {
         toast.error('Invalid email or password');
@@ -50,7 +50,6 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
     }
   };
 
-  // 3. UI
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       <div>

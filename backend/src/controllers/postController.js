@@ -16,7 +16,6 @@ export const getPostById = async (req, res) => {
     if (isNaN(id)) {
       return res.status(400).json({ message: 'Bad Request: Invalid ID' });
     }
-
     const post = await postService.getById(id);
     if (!post) {
       return res.status(404).json({ message: 'Post Not Found' });

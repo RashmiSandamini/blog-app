@@ -2,7 +2,11 @@ import pool from '../database.js';
 
 export const getAll = async () => {
   try {
-    const [rows] = await pool.query('SELECT * FROM posts');
+    const [rows] = await pool.query(`
+      SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.uid = users.id
+    `);
     return rows;
   } catch (err) {
     console.error('Error fetching posts:', err.message);
@@ -12,7 +16,15 @@ export const getAll = async () => {
 
 export const getById = async (id) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
+    const [rows] = await pool.query(
+      `SELECT 
+         posts.*, 
+         users.username 
+       FROM posts 
+       JOIN users ON posts.id = users.id 
+       WHERE posts.id = ?`,
+      [id]
+    );
     return rows[0];
   } catch (err) {
     console.error('Error fetching post by ID:', err.message);

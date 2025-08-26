@@ -1,126 +1,96 @@
-import Header from '../components/Header';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog';
-import { Button } from '../components/ui/button';
-import { useState } from 'react';
-import { SignUpForm } from '../components/SignUp';
-import { SignInForm } from '../components/SignIn';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
+import PostCard from '../components/PostCard';
 
 export default function Home() {
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState('Join Blogsy');
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
 
-  const switchToSignIn = () => {
-    setIsSignUpOpen(false);
-    setTimeout(() => setIsSignInOpen(true), 100);
-  };
+  useEffect(() => {
+    if (token) {
+      axios
+        .get('http://localhost:3000/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setUserData(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+          setLoading(false);
+        });
 
-  const switchToSignUp = () => {
-    setIsSignInOpen(false);
-    setTimeout(() => setIsSignUpOpen(true), 100);
-  };
+      axios
+        .get('http://localhost:3000/api/posts')
+        .then((res) => setPosts(res.data))
+        .catch((err) => console.error('Posts error:', err))
+        .finally(() => setLoading(false));
+    } else {
+      navigate('/');
+    }
+  }, [token]);
 
-  const closeDialog = () => {
-    setIsSignInOpen(false);
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  const openWriteDialog = () => {
-    setDialogTitle('Create an account to start writing');
-    setIsSignUpOpen(true);
-  };
-
-  const openGetStartedDialog = () => {
-    setDialogTitle('Join Blogsy');
-    setIsSignUpOpen(true);
-  };
   return (
     <>
-      <Header
-        setIsSignInOpen={setIsSignInOpen}
-        openWriteDialog={openWriteDialog}
-        openGetStartedDialog={openGetStartedDialog}
-      />
-      <div className='md:flex items-center mt-12'>
-        <div className='flex flex-1'>
-          <div className='sm:p-8 flex flex-col gap-5 w-full max-w-xl'>
-            <h1 className='text-6xl font-semibold text-gray-800 font-serif leading-tight'>
-              Ideas worth sharing.
-            </h1>
-            <p className='text-lg text-gray-600 mt-2'>
-              A space to explore ideas, express your voice, and engage with
-              meaningful stories that inspire, challenge, and connect us all.
-            </p>
-            <Button
-              className='w-1/3 rounded-full cursor-pointer'
-              onClick={() => {
-                setIsSignUpOpen(true);
-              }}
-            >
-              {' '}
-              Start Reading
-            </Button>
-
-            <Dialog open={isSignUpOpen} onOpenChange={setIsSignUpOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className='text-center text-2xl'>
-                    {dialogTitle}
-                  </DialogTitle>
-                  <DialogDescription>
-                    Create your account to start exploring stories and sharing
-                    yours.
-                  </DialogDescription>
-                </DialogHeader>
-                <SignUpForm />
-                <p className='text-sm text-center mt-4 text-muted-foreground'>
-                  Already have an account?{' '}
-                  <span
-                    className='text-primary underline cursor-pointer'
-                    onClick={switchToSignIn}
-                  >
-                    Sign In
-                  </span>
-                </p>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={isSignInOpen} onOpenChange={setIsSignInOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className='text-center text-2xl'>
-                    Welcome Back!
-                  </DialogTitle>
-                  <DialogDescription>
-                    Sign in to continue exploring and sharing.
-                  </DialogDescription>
-                </DialogHeader>
-                <SignInForm closeDialog={closeDialog} />
-                <p className='text-sm text-center mt-4 text-muted-foreground'>
-                  Don’t have an account?{' '}
-                  <span
-                    className='text-primary underline cursor-pointer'
-                    onClick={switchToSignUp}
-                  >
-                    Sign Up
-                  </span>
-                </p>
-              </DialogContent>
-            </Dialog>
+      <div className='shadow-md rounded-3xl bg-white'>
+        <header className='w-full flex items-center justify-between sm:py-4 sm:p-10 py-3 p-5'>
+          <div>
+            <img
+              src='/logo.svg'
+              alt='logo'
+              className='w-16 cursor-pointer max-w-xs'
+            />
           </div>
-        </div>
-        <div className='flex-1'>
-          <img
-            src='/hero-image.svg'
-            alt='a free girl'
-            className='w-full hidden md:block'
-          />
-        </div>
+
+          <nav className='flex items-center'>
+            <ul className='flex gap-12 text-md items-center'>
+              <li className='hidden md:block hover:text-primary'>
+                <button onClick={() => {}} className='cursor-pointer '>
+                  Write
+                </button>
+              </li>
+
+              <li className='cursor-pointer hover:text-primary'>
+                <Avatar className='size-10'>
+                  <AvatarImage
+                    src={
+                      userData?.profilePicture ||
+                      'https://github.com/shadcn.png'
+                    }
+                    alt='@shadcn'
+                  />
+                  <AvatarFallback className='text-xs'>
+                    {userData?.username?.[0]?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </li>
+            </ul>
+          </nav>
+        </header>
+      </div>
+
+      <div className='mt-10 mx-auto'>
+        <h1 className='text-4xl font-semibold mb-4'>
+          Welcome {userData?.username}!
+        </h1>
+      </div>
+
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 pb-10'>
+        {posts.map((post: any) => (
+          <PostCard key={post.id} post={post} />
+        ))}
       </div>
     </>
   );
