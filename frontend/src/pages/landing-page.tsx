@@ -6,21 +6,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
-import { Button } from '../components/ui/button';
-import { useState } from 'react';
-import { SignUpForm } from '../components/SignUp';
-import { SignInForm } from '../components/SignIn';
+import { useEffect, useState } from 'react';
+import { SignUpForm } from '../components/sign-up';
+import { SignInForm } from '../components/sign-in';
+import PostCard from '../components/post-card';
+import axios from 'axios';
 
 export default function LandingPage() {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('Join Blogsy');
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3000/api/posts')
+      .then((res) => setPosts(res.data))
+      .catch((err) => console.error('Posts error:', err));
+  }, []);
 
   const switchToSignIn = () => {
     setIsSignUpOpen(false);
     setTimeout(() => setIsSignInOpen(true), 100);
   };
-
   const switchToSignUp = () => {
     setIsSignInOpen(false);
     setTimeout(() => setIsSignUpOpen(true), 100);
@@ -56,7 +64,7 @@ export default function LandingPage() {
               A space to explore ideas, express your voice, and engage with
               meaningful stories that inspire, challenge, and connect us all.
             </p>
-            <Button
+            {/* <Button
               className='w-1/3 rounded-full cursor-pointer'
               onClick={() => {
                 setIsSignUpOpen(true);
@@ -64,7 +72,7 @@ export default function LandingPage() {
             >
               {' '}
               Start Reading
-            </Button>
+            </Button> */}
 
             <Dialog open={isSignUpOpen} onOpenChange={setIsSignUpOpen}>
               <DialogContent>
@@ -101,7 +109,7 @@ export default function LandingPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <SignInForm closeDialog={closeDialog} />
-                <p className='text-sm text-center mt-4 text-muted-foreground'>
+                {/* <p className='text-sm text-center mt-4 text-muted-foreground'>
                   Don’t have an account?{' '}
                   <span
                     className='text-primary underline cursor-pointer'
@@ -109,7 +117,7 @@ export default function LandingPage() {
                   >
                     Sign Up
                   </span>
-                </p>
+                </p> */}
               </DialogContent>
             </Dialog>
           </div>
@@ -121,6 +129,11 @@ export default function LandingPage() {
             className='w-full hidden md:block'
           />
         </div>
+      </div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 pb-10'>
+        {posts.map((post: any) => (
+          <PostCard key={post.id} post={post} />
+        ))}
       </div>
     </>
   );

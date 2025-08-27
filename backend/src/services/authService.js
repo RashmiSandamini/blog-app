@@ -2,9 +2,19 @@ import bcrypt from 'bcryptjs';
 import pool from '../database.js';
 import jwt from 'jsonwebtoken';
 
-export const checkUserExists = async (email) => {
+export const checkUserExistsByEmail = async (email) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [
     email,
+  ]);
+  if (rows.length > 0) {
+    return rows[0];
+  }
+  return null;
+};
+
+export const checkUserExists = async (username) => {
+  const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [
+    username,
   ]);
   if (rows.length > 0) {
     return rows[0];

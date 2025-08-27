@@ -8,6 +8,7 @@ import {
 import axios from 'axios';
 
 interface User {
+  id: number;
   username: string;
   email: string;
   profilePicture?: string;

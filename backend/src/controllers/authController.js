@@ -1,4 +1,4 @@
-import * as authService from '../services/auth.js';
+import * as authService from '../services/authService.js';
 
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -19,9 +19,9 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const user = await authService.checkUserExists(email);
+    const user = await authService.checkUserExists(username);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -34,7 +34,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = authService.generateToken(user.id, user.email);
+    const token = authService.generateToken(user.id, user.email, user.username);
 
     res.status(200).json({ message: 'Login successful', token });
   } catch (err) {

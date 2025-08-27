@@ -4,10 +4,12 @@ interface PostCardProps {
   post: {
     id: number;
     title: string;
+    subtitle: string;
     date: string;
+    created_at: string;
     desc: string;
     username: string;
-    imgUrl?: string;
+    cover_photo?: string;
   };
 }
 
@@ -18,25 +20,29 @@ export default function PostCard({ post }: PostCardProps) {
         key={post.id}
         className='hover:cursor-pointer h-96 bg-white shadow-md rounded-3xl border border-gray-200 hover:shadow-xl transition duration-300 flex flex-col overflow-hidden'
       >
-        <img
-          src={
-            post.imgUrl ??
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixMUT-tvYkn-4K0khhYC3lKHV_mRmBGpc0g&s'
-          }
-          alt={post.title}
-          className='w-full h-2/3 object-cover'
-        />
-        <div className='p-4 flex-1 flex flex-col'>
-          <h2 className='text-xl font-bold mb-2'>{post.title}</h2>
-          <p className='text-gray-600 text-sm mb-2'>
+        <div className='h-2/3 w-full'>
+          <img
+            src={post.cover_photo}
+            alt={post.title}
+            className='w-full h-full object-cover'
+          />
+        </div>
+
+        <div className='p-4 flex-1 flex flex-col overflow-hidden'>
+          <h1 className='text-lg font-semibold mb-1 truncate'>{post.title}</h1>
+
+          <p className='text-sm text-gray-700 line-clamp-2 mb-1'>
+            {post.subtitle}
+          </p>
+
+          <p className='text-xs text-gray-500 mt-auto'>
             by {post.username} on{' '}
-            {new Date(post.date).toLocaleDateString('en-US', {
+            {new Date(post.created_at).toLocaleDateString('en-US', {
               day: 'numeric',
               month: 'short',
               year: 'numeric',
             })}
           </p>
-          <p className='text-gray-700 text-sm line-clamp-3'>{post.desc}</p>
         </div>
       </div>
     </Link>

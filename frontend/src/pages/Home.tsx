@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
-import PostCard from '../components/PostCard';
-import { useAuth } from '../context/AuthContext';
+import PostCard from '../components/post-card';
+import { useAuth } from '../context/auth-context';
 
 export default function Home() {
   const navigate = useNavigate();

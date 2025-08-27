@@ -6,10 +6,11 @@ import { toast } from 'sonner';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth-context';
 
 const formSchema = z.object({
-  email: z.email({ message: 'Enter a valid email address' }),
+  // email: z.email({ message: 'Enter a valid email address' }),
+  username: z.string().nonempty({ message: 'Username is required' }),
   password: z.string().nonempty({ message: 'Password is required' }),
 });
 
@@ -40,7 +41,7 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
       const token = response.data.token;
       setToken(token);
       closeDialog && closeDialog();
-      navigate('/home');
+      navigate('/me/stories');
     } catch (err: any) {
       if (err.response?.status === 401) {
         toast.error('Invalid email or password');
@@ -56,9 +57,9 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       <div>
-        <Input {...register('email')} type='email' placeholder='Email' />
-        {errors.email && (
-          <p className='text-sm text-red-500'>{errors.email.message}</p>
+        <Input {...register('username')} placeholder='Username' />
+        {errors.username && (
+          <p className='text-sm text-red-500'>{errors.username.message}</p>
         )}
       </div>
 

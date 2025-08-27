@@ -37,6 +37,30 @@ export const createPost = async (req, res) => {
   }
 };
 
+export const createNewPost = async (req, res) => {
+  try {
+    const { title, subtitle, markdown } = req.body;
+    const coverPhotoBuffer = req.file?.buffer;
+    const userId = req.user.userId;
+
+    const result = await postService.createNewPost({
+      title,
+      subtitle,
+      markdown,
+      coverPhotoBuffer,
+      userId,
+    });
+
+    res.status(201).json(result);
+  } catch (err) {
+    console.error(err);
+    if (err.message === 'Cover photo is required') {
+      return res.status(400).json({ message: err.message });
+    }
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const deletePost = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -54,12 +78,18 @@ export const deletePost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
+  const userId = req.user.userId;
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id))
       return res.status(400).json({ message: 'Bad Request: Invalid ID' });
-
-    const updatedPost = await postService.updateById(id, req.body);
+    const coverPhotoBuffer = req.file?.buffer;
+    const updatedPost = await postService.updateById(
+      id,
+      req.body,
+      coverPhotoBuffer,
+      userId
+    );
     if (!updatedPost)
       return res.status(404).json({ message: 'Post Not Found' });
 
