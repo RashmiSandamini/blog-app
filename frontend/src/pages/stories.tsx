@@ -103,7 +103,7 @@ export default function Stories() {
         <div className='flex justify-between items-center'>
           <h1 className='text-4xl font-bold mb-4 text-gray-800'>Your Posts</h1>
           <Button
-            className='rounded-3xl bg-white border text-black gap-3'
+            className='rounded-3xl border text-black'
             onClick={() => {
               if (!user) {
                 toast.error('You must be logged in to create a post.');

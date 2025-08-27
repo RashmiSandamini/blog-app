@@ -6,7 +6,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { FileUploadComponent } from '../components/file-upload-component';
-import Header from '../components/header';
+import Header from '../components/Header';
 import {
   MDXEditor,
   headingsPlugin,
@@ -19,7 +19,7 @@ import '@mdxeditor/editor/style.css';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useAuth } from '../context/auth-context';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const postSchema = z.object({
@@ -36,6 +36,7 @@ export default function NewPost() {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
@@ -48,6 +49,14 @@ export default function NewPost() {
   });
   const { user, token, loading } = useAuth();
   const navigate = useNavigate();
+  const [submitMode, setSubmitMode] = useState<'draft' | 'publish'>('draft');
+  const watchedValues = watch();
+
+  const isDraftButtonEnabled =
+    watchedValues.title?.trim() &&
+    (watchedValues.subtitle?.trim() ||
+      (watchedValues.coverPhoto && watchedValues.coverPhoto.length > 0) ||
+      watchedValues.markdown?.trim());
 
   useEffect(() => {
     if (!loading && !user) {
@@ -65,20 +74,46 @@ export default function NewPost() {
     if (data.coverPhoto.length > 0) {
       formData.append('coverPhoto', data.coverPhoto[0]);
     }
+    // try {
+    //   const response = await axios.post(
+    //     'http://localhost:3000/api/posts',
+    //     formData,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     }
+    //   );
+    //   toast.success('Post published successfully!');
+    //   navigate('/me/stories');
+    // } catch (error) {
+    //   toast.error('Failed to publish post');
+    // }
+
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/posts',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success('Post published successfully!');
-      navigate('/me/stories');
-    } catch (error) {
-      toast.error('Failed to publish post');
+      if (submitMode === 'draft') {
+        await axios.post(
+          `http://localhost:3000/api/posts?status=draft`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success('Draft saved successfully!');
+        navigate('/me/stories');
+      } else {
+        await axios.post(
+          `http://localhost:3000/api/posts?status=published`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success('Post published successfully!');
+        navigate('/me/stories');
+      }
+    } catch (err) {
+      toast.error('Failed to create post');
     }
   };
 
@@ -182,12 +217,21 @@ export default function NewPost() {
           )}
         </div>
 
-        {/* Submit button right aligned */}
-        <div className='flex justify-end'>
+        <div className='flex flex-col items-end gap-4'>
           <Button
             type='submit'
+            onClick={() => setSubmitMode('draft')}
+            disabled={!isDraftButtonEnabled || isSubmitting}
+            className='rounded-3xl px-6 py-2 transition bg-secondary text-black hover:bg-accent'
+          >
+            {isSubmitting ? 'Saving...' : 'Save as a Draft'}
+          </Button>
+
+          <Button
+            type='submit'
+            onClick={() => setSubmitMode('publish')}
             disabled={isSubmitting}
-            className='rounded px-6 py-2 transition'
+            className='rounded-3xl px-6 py-2 transition '
           >
             {isSubmitting ? 'Publishing...' : 'Publish Post'}
           </Button>

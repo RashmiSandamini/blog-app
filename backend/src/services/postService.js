@@ -75,6 +75,7 @@ export const createNewPost = async ({
   markdown,
   coverPhotoBuffer,
   userId,
+  isPublished,
 }) => {
   if (!coverPhotoBuffer) {
     throw new Error('Cover photo is required');
@@ -82,7 +83,7 @@ export const createNewPost = async ({
 
   await pool.execute(
     'INSERT INTO posts (title, subtitle, content, cover_photo, user_id, is_published) VALUES (?, ?, ?, ?, ?, ?)',
-    [title, subtitle, markdown, coverPhotoBuffer, userId, true]
+    [title, subtitle, markdown, coverPhotoBuffer, userId, isPublished]
   );
 
   return { message: 'Post created successfully' };
@@ -93,20 +94,26 @@ export const deleteById = async (id) => {
   return result.affectedRows > 0;
 };
 
-export const updateById = async (id, data, coverPhotoBuffer, userId) => {
+export const updateById = async (
+  id,
+  data,
+  coverPhotoBuffer,
+  userId,
+  isPublished
+) => {
   const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
   if (rows.length === 0) return null;
   const { title, subtitle, markdown } = data;
   if (!coverPhotoBuffer) {
     const [result] = await pool.query(
-      'UPDATE posts SET title = ?, subtitle = ?, content = ?, user_id=?, is_published=1 WHERE id = ?',
-      [title, subtitle, markdown, userId, id]
+      'UPDATE posts SET title = ?, subtitle = ?, content = ?, user_id=?, is_published=? WHERE id = ?',
+      [title, subtitle, markdown, userId, isPublished, id]
     );
     return result.affectedRows > 0;
   } else {
     const [result] = await pool.query(
-      'UPDATE posts SET title = ?, subtitle = ?, content = ?, cover_photo = ?, user_id=? WHERE id = ?',
-      [title, subtitle, markdown, coverPhotoBuffer, userId, id]
+      'UPDATE posts SET title = ?, subtitle = ?, content = ?, cover_photo = ?, user_id=?, is_published=? WHERE id = ?',
+      [title, subtitle, markdown, coverPhotoBuffer, userId, isPublished, id]
     );
     return result.affectedRows > 0;
   }

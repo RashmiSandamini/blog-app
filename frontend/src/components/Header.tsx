@@ -34,7 +34,7 @@ export default function Header({
     navigate('/');
   };
   return (
-    <div className='shadow-md rounded-3xl bg-white sticky top-1'>
+    <div className='shadow-md rounded-3xl bg-white sticky  top-0 z-50'>
       <header className='w-full flex items-center justify-between sm:py-4 sm:p-10 py-3 p-5'>
         <div>
           <img

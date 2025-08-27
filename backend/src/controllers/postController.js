@@ -43,12 +43,30 @@ export const createNewPost = async (req, res) => {
     const coverPhotoBuffer = req.file?.buffer;
     const userId = req.user.userId;
 
+    const status = req.query.status;
+    const isPublished = status === 'published' ? 1 : 0;
+
+    if (isPublished) {
+      if (
+        !title?.trim() ||
+        !subtitle?.trim() ||
+        !markdown?.trim() ||
+        !coverPhotoBuffer
+      ) {
+        return res.status(400).json({
+          message:
+            'Title, subtitle, content, and cover photo are required for publishing.',
+        });
+      }
+    }
+
     const result = await postService.createNewPost({
-      title,
-      subtitle,
-      markdown,
+      title: title ?? '',
+      subtitle: subtitle ?? '',
+      markdown: markdown ?? '',
       coverPhotoBuffer,
       userId,
+      isPublished,
     });
 
     res.status(201).json(result);
@@ -79,17 +97,25 @@ export const deletePost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const userId = req.user.userId;
+
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id))
       return res.status(400).json({ message: 'Bad Request: Invalid ID' });
+
+    const status = req.query.status;
+    const isPublished = status === 'published' ? 1 : 0;
+
     const coverPhotoBuffer = req.file?.buffer;
+
     const updatedPost = await postService.updateById(
       id,
       req.body,
       coverPhotoBuffer,
-      userId
+      userId,
+      isPublished
     );
+
     if (!updatedPost)
       return res.status(404).json({ message: 'Post Not Found' });
 

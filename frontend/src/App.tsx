@@ -7,20 +7,26 @@ import PostDetails from './pages/post-details';
 import Stories from './pages/Stories';
 import NewPost from './pages/new-post';
 import EditPost from './pages/edit-post';
+import Footer from './components/footer';
 
 function App() {
   return (
-    <>
+    <div className='flex flex-col min-h-screen'>
       <Toaster />
-      <Routes>
-        <Route path='/' element={<LandingPage />}></Route>
-        <Route path='/home' element={<Home />}></Route>
-        <Route path='/posts/:id' element={<PostDetails />}></Route>
-        <Route path='/me/stories' element={<Stories />}></Route>
-        <Route path='/new-post' element={<NewPost />} />
-        <Route path='/edit-post/:id' element={<EditPost />}></Route>
-      </Routes>
-    </>
+
+      <main className='flex-grow'>
+        <Routes>
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/home' element={<Home />} />
+          <Route path='/posts/:id' element={<PostDetails />} />
+          <Route path='/me/stories' element={<Stories />} />
+          <Route path='/new-post' element={<NewPost />} />
+          <Route path='/edit-post/:id' element={<EditPost />} />
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
   );
 }
 

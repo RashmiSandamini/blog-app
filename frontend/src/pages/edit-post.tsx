@@ -6,7 +6,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { FileUploadComponent } from '../components/file-upload-component';
-import Header from '../components/header';
+import Header from '../components/Header';
 import {
   MDXEditor,
   headingsPlugin,
@@ -40,6 +40,7 @@ export default function EditPost() {
   const [existingCoverPhoto, setExistingCoverPhoto] = useState<string | null>(
     null
   );
+  const [submitMode, setSubmitMode] = useState<'draft' | 'publish'>('draft');
 
   const {
     register,
@@ -123,10 +124,26 @@ export default function EditPost() {
     }
 
     try {
-      await axios.put(`http://localhost:3000/api/posts/${id}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success('Post updated successfully!');
+      if (submitMode === 'draft') {
+        await axios.put(
+          `http://localhost:3000/api/posts/${id}?status=draft`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success('Draft saved successfully!');
+      } else {
+        await axios.put(
+          `http://localhost:3000/api/posts/${id}?status=published`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success('Post published successfully!');
+      }
+
       navigate('/me/stories');
     } catch (err) {
       toast.error('Failed to update post');
@@ -135,7 +152,6 @@ export default function EditPost() {
 
   if (initialLoading)
     return <div className='text-center mt-10'>Loading...</div>;
-  console.log(isDirty);
   return (
     <>
       <Header />
@@ -257,11 +273,20 @@ export default function EditPost() {
           )}
         </div>
 
-        <div className='flex justify-end'>
+        <div className='flex flex-col items-end gap-4'>
+          <Button
+            type='submit'
+            onClick={() => setSubmitMode('draft')}
+            className='rounded-3xl px-6 py-2 transition bg-secondary text-black hover:bg-accent'
+          >
+            {isSubmitting ? 'Saving...' : 'Save as a Draft'}
+          </Button>
+
           <Button
             type='submit'
             disabled={!isDirty}
-            className='rounded px-6 py-2 transition'
+            onClick={() => setSubmitMode('publish')}
+            className='rounded-3xl px-6 py-2 transition text-black'
           >
             {isSubmitting ? 'Publishing...' : 'Publish Post'}
           </Button>

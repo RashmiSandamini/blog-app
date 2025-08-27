@@ -47,7 +47,7 @@ export function FileUploadComponent({
             <Upload className='size-6 text-muted-foreground' />
           </div>
           <p className='font-medium text-sm'>
-            Drop your sample{limit > 1 ? 's' : ''} here!
+            Drop your cover photo{limit > 1 ? 's' : ''} here!
           </p>
           <p className='text-muted-foreground text-xs'>
             Or click to browse (max {limit} {limit > 1 ? 'files' : 'file'}, up
