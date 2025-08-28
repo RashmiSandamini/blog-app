@@ -35,7 +35,7 @@ This is Phase 1 of the application, where a single admin manages all posts. User
 
 | Layer       | Technology                |
 | ----------- | ------------------------- |
-| Frontend    | React, Vite, Tailwind CSS |
+| Frontend    | React, Vite, Tailwind CSS, shadcn UI |
 | Backend     | Node.js, Express.js       |
 | Database    | MySQL                     |
 | Auth        | JWT, bcrypt               |
@@ -79,9 +79,9 @@ CLIENT_URL = http://localhost:5173
 npm run start:dev
 ```
 
-### 3. Setup the Backend
+### 3. Setup the Databse
 
-Make sure you have MySQL installed and import the SQL dump provided in the folder `blo_app.sql` byfollowing one of the methods below.
+Make sure you have MySQL installed and import the SQL dump provided in the folder `blog_app.sql` by following one of the methods below.
 
 #### Option 1: Using Command Line
 
@@ -149,3 +149,9 @@ Password = 1234
 
 - Raw SQL queries are used instead of an ORM like Sequelize, which will be integrated in future updates.
 - No support for multiple admin accounts or user roles at this time.
+
+
+## 📍 Watch the Demonstration
+
+([[Watch the demo video]](https://drive.google.com/file/d/1u0xJNE6xxBwgEZtw1dYGLnDNJ9X0zCfa/view?usp=sharing))
+
