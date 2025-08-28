@@ -34,12 +34,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       if (!token) {
-        console.log('hi');
         setUser(null);
         setLoading(false);
         return;
       } else {
-        console.log('hello');
         setLoading(true);
         try {
           const res = await axios.get(`${API_BASE_URL}/users`, {
