@@ -14,14 +14,17 @@ import {
   markdownShortcutPlugin,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
+  type MDXEditorMethods,
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useAuth } from '../context/auth-context';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { X } from 'lucide-react';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const postSchema = z.object({
   title: z.string().min(3, 'Title should be more than 3 characters'),
@@ -31,7 +34,6 @@ const postSchema = z.object({
 });
 
 type PostFormData = z.infer<typeof postSchema>;
-
 export default function EditPost() {
   const { id } = useParams();
   const { user, token, loading } = useAuth();
@@ -41,6 +43,7 @@ export default function EditPost() {
     null
   );
   const [submitMode, setSubmitMode] = useState<'draft' | 'publish'>('draft');
+  const editorRef = useRef<MDXEditorMethods>(null);
 
   const {
     register,
@@ -65,10 +68,12 @@ export default function EditPost() {
 
   useEffect(() => {
     if (!user && !loading) navigate('/');
-  }, [id, token, loading]);
+  }, [user, token, loading]);
 
   useEffect(() => {
     if (postFromState) {
+      editorRef.current?.setMarkdown(postFromState.content);
+
       reset({
         title: postFromState.title,
         subtitle: postFromState.subtitle,
@@ -76,16 +81,16 @@ export default function EditPost() {
         coverPhoto: [],
       });
       setExistingCoverPhoto(postFromState.cover_photo ?? null);
-      // setInitialLoading(false);
     } else {
       fetchPost();
     }
-  }, []);
+  }, [postFromState, reset]);
 
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/posts/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/posts/${id}`);
       const post = res.data;
+      editorRef.current?.setMarkdown(post.content);
 
       reset({
         title: post.title,
@@ -125,17 +130,13 @@ export default function EditPost() {
 
     try {
       if (submitMode === 'draft') {
-        await axios.put(
-          `http://localhost:3000/api/posts/${id}?status=draft`,
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await axios.put(`${API_BASE_URL}/posts/${id}?status=draft`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         toast.success('Draft saved successfully!');
       } else {
         await axios.put(
-          `http://localhost:3000/api/posts/${id}?status=published`,
+          `${API_BASE_URL}/posts/${id}?status=published`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -247,6 +248,7 @@ export default function EditPost() {
             name='markdown'
             render={({ field }) => (
               <MDXEditor
+                ref={editorRef}
                 markdown={field.value}
                 onChange={field.onChange}
                 className='border rounded-md'
@@ -283,7 +285,6 @@ export default function EditPost() {
 
           <Button
             type='submit'
-            disabled={!isDirty}
             onClick={() => setSubmitMode('publish')}
             className='rounded-3xl px-6 py-2 transition text-black'
           >

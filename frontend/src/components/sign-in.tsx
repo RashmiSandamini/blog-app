@@ -15,6 +15,7 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
   const { setToken } = useAuth();
@@ -29,13 +30,9 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/login',
-        data,
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, data, {
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       toast.success('Login successful!');
       const token = response.data.token;

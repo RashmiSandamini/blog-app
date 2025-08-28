@@ -11,6 +11,7 @@ import { SignUpForm } from '../components/sign-up';
 import { SignInForm } from '../components/sign-in';
 import PostCard from '../components/post-card';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function LandingPage() {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3000/api/posts')
+      .get(`${API_BASE_URL}/posts`)
       .then((res) => setPosts(res.data))
       .catch((err) => console.error('Posts error:', err));
   }, []);

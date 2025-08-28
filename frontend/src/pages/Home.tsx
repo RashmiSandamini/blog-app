@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import PostCard from '../components/post-card';
 import { useAuth } from '../context/auth-context';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Home() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
@@ -17,7 +19,7 @@ export default function Home() {
 
     if (!loading && user && token) {
       axios
-        .get('http://localhost:3000/api/posts')
+        .get(`${API_BASE_URL}/posts`)
         .then((res) => setPosts(res.data))
         .catch((err) => console.error('Posts error:', err));
     }
