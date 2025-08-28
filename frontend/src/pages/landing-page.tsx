@@ -30,10 +30,10 @@ export default function LandingPage() {
     setIsSignUpOpen(false);
     setTimeout(() => setIsSignInOpen(true), 100);
   };
-  const switchToSignUp = () => {
-    setIsSignInOpen(false);
-    setTimeout(() => setIsSignUpOpen(true), 100);
-  };
+  // const switchToSignUp = () => {
+  //   setIsSignInOpen(false);
+  //   setTimeout(() => setIsSignUpOpen(true), 100);
+  // };
 
   const closeDialog = () => {
     setIsSignInOpen(false);

@@ -16,18 +16,18 @@ interface HeaderProps {
 
 export default function Header({
   setIsSignInOpen,
-  openWriteDialog,
-  openGetStartedDialog,
-}: HeaderProps) {
+}: // openWriteDialog,
+// openGetStartedDialog,
+HeaderProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const handleWriteClick = () => {
-    if (user) {
-      // openWriteDialog?.();
-    } else {
-      // openWriteDialog?.();
-    }
-  };
+  // const handleWriteClick = () => {
+  //   if (user) {
+  //     // openWriteDialog?.();
+  //   } else {
+  //     // openWriteDialog?.();
+  //   }
+  // };
 
   const handleLogout = () => {
     logout();
