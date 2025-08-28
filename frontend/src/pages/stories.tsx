@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/Header';
+import Header from '../components/header';
 import {
   Tabs,
   TabsContent,
@@ -37,12 +37,14 @@ export default function Stories() {
     if (!loading && !user) {
       navigate('/');
     }
+  }, [user, token, loading, navigate]);
 
+  useEffect(() => {
     if (user && token) {
       fetchDrafts();
       fetchPublished();
     }
-  }, [user, token, loading]);
+  }, [user, token]);
 
   const fetchDrafts = async () => {
     try {
@@ -94,7 +96,7 @@ export default function Stories() {
     }
   };
 
-  if (loading) return <div className='text-center mt-10'>Loading...</div>;
+  if (loading || !user) return null;
 
   return (
     <>

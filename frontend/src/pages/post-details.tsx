@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import axios from 'axios';
 import { useAuth } from '../context/auth-context';
-import Header from '../components/Header';
+import Header from '../components/header';
 import ReactMarkdown from 'react-markdown';
 
 interface Post {
@@ -55,67 +55,15 @@ export default function PostDetails() {
 
   return (
     <>
-      {/* <div className='shadow-md rounded-3xl bg-white'>
-        <header className='w-full flex items-center justify-between sm:py-4 sm:p-10 py-3 p-5'>
-          <div>
-            <img
-              src='/logo.svg'
-              alt='logo'
-              className='w-16 cursor-pointer max-w-xs'
-            />
-          </div>
-
-          <nav className='flex items-center'>
-            <ul className='flex gap-12 text-md items-center'>
-              {user ? (
-                <>
-                  <li className='hidden md:block hover:text-primary'>
-                    <button onClick={() => {}} className='cursor-pointer '>
-                      Write
-                    </button>
-                  </li>
-                  <li className='cursor-pointer hover:text-primary'>
-                    <Avatar className='size-10'>
-                      <AvatarImage
-                        src={
-                          user?.profilePicture ||
-                          'https://github.com/shadcn.png'
-                        }
-                        alt='@shadcn'
-                      />
-                      <AvatarFallback className='text-xs'>
-                        {user?.username?.[0]?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </li>
-                </>
-              ) : (
-                <li>
-                  <button
-                    onClick={() => setIsSignInOpen?.(true)}
-                    className='hidden sm:block cursor-pointer'
-                  >
-                    Login
-                  </button>
-                </li>
-              )}
-            </ul>
-          </nav>
-        </header>
-      </div> */}
-
       <Header setIsSignInOpen={setIsSignInOpen} />
       <div className='max-w-3xl mx-auto mt-10 px-4 pb-10'>
         <h1 className='text-4xl font-bold mb-2 text-gray-800'>{post.title}</h1>
         <h2 className='text-sm mb-4 text-gray-600'>{post.subtitle}</h2>
         <div className='flex gap-4 items-center'>
           <Avatar className='size-10'>
-            <AvatarImage
-              src={post.authorProfilePicture || 'https://github.com/shadcn.png'}
-              alt={post.username}
-            />
+            <AvatarImage src={post?.authorProfilePicture} alt={post.username} />
             <AvatarFallback className='text-xs'>
-              {post.username?.[0]?.toUpperCase()}
+              {post?.username?.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>
