@@ -143,11 +143,9 @@ Password = 1234
 ### Assumptions
 
 - This version supports a single admin user managing blog content.
-
 - User registration and login flows exist in the codebase but are currently disabled.
 
 ### Limitations
 
 - Raw SQL queries are used instead of an ORM like Sequelize, which will be integrated in future updates.
-
 - No support for multiple admin accounts or user roles at this time.
