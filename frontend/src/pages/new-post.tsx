@@ -6,7 +6,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { FileUploadComponent } from '../components/file-upload-component';
-import Header from '../components/Header';
+import Header from '../components/header';
 import {
   MDXEditor,
   headingsPlugin,
@@ -74,21 +74,6 @@ export default function NewPost() {
     if (data.coverPhoto.length > 0) {
       formData.append('coverPhoto', data.coverPhoto[0]);
     }
-    // try {
-    //   const response = await axios.post(
-    //     'http://localhost:3000/api/posts',
-    //     formData,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
-    //   toast.success('Post published successfully!');
-    //   navigate('/me/stories');
-    // } catch (error) {
-    //   toast.error('Failed to publish post');
-    // }
 
     try {
       if (submitMode === 'draft') {
@@ -116,6 +101,7 @@ export default function NewPost() {
       toast.error('Failed to create post');
     }
   };
+  if (loading || !user) return null;
 
   return (
     <>

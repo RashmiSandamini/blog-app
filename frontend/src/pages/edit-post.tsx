@@ -6,7 +6,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { FileUploadComponent } from '../components/file-upload-component';
-import Header from '../components/Header';
+import Header from '../components/header';
 import {
   MDXEditor,
   headingsPlugin,
@@ -36,7 +36,7 @@ export default function EditPost() {
   const { id } = useParams();
   const { user, token, loading } = useAuth();
   const navigate = useNavigate();
-  const [initialLoading, setInitialLoading] = useState(true);
+  // const [initialLoading, setInitialLoading] = useState(true);
   const [existingCoverPhoto, setExistingCoverPhoto] = useState<string | null>(
     null
   );
@@ -76,7 +76,7 @@ export default function EditPost() {
         coverPhoto: [],
       });
       setExistingCoverPhoto(postFromState.cover_photo ?? null);
-      setInitialLoading(false);
+      // setInitialLoading(false);
     } else {
       fetchPost();
     }
@@ -95,7 +95,7 @@ export default function EditPost() {
       });
 
       setExistingCoverPhoto(post.cover_photo ?? null);
-      setInitialLoading(false);
+      // setInitialLoading(false);
     } catch (error) {
       toast.error('Failed to fetch post data');
       navigate('/me/stories');
@@ -150,8 +150,7 @@ export default function EditPost() {
     }
   };
 
-  if (initialLoading)
-    return <div className='text-center mt-10'>Loading...</div>;
+  if (loading || !user) return null;
   return (
     <>
       <Header />
