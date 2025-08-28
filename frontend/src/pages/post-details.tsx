@@ -5,6 +5,14 @@ import axios from 'axios';
 import { useAuth } from '../context/auth-context';
 import Header from '../components/header';
 import ReactMarkdown from 'react-markdown';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
+import { SignInForm } from '../components/sign-in';
 
 interface Post {
   id: number;
@@ -18,6 +26,8 @@ interface Post {
   authorProfilePicture?: string;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function PostDetails() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>();
@@ -26,12 +36,14 @@ export default function PostDetails() {
 
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
+  const closeDialog = () => {
+    setIsSignInOpen(false);
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const postRes = await axios.get(
-          `http://localhost:3000/api/posts/${id}`
-        );
+        const postRes = await axios.get(`${API_BASE_URL}/posts/${id}`);
         setPost(postRes.data);
       } catch (error) {
         let message = 'Something went wrong';
@@ -90,6 +102,28 @@ export default function PostDetails() {
         </div>
         {/* <p className='whitespace-pre-line'>{post.desc}</p> */}
       </div>
+      <Dialog open={isSignInOpen} onOpenChange={setIsSignInOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className='text-center text-2xl'>
+              Welcome Back!
+            </DialogTitle>
+            <DialogDescription>
+              Sign in to continue exploring and sharing.
+            </DialogDescription>
+          </DialogHeader>
+          <SignInForm closeDialog={closeDialog} />
+          {/* <p className='text-sm text-center mt-4 text-muted-foreground'>
+                  Don’t have an account?{' '}
+                  <span
+                    className='text-primary underline cursor-pointer'
+                    onClick={switchToSignUp}
+                  >
+                    Sign Up
+                  </span>
+                </p> */}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -23,6 +23,7 @@ const SignUpSchema = z.object({
     .string()
     .min(6, { message: 'Password must be at least 6 characters long.' }),
 });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type SignUpFormData = z.infer<typeof SignUpSchema>;
 
@@ -38,15 +39,11 @@ export function SignUpForm() {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/register',
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       toast.success('Account created successfully!');
     } catch (error: any) {
       if (error.response && error.response.status === 409) {

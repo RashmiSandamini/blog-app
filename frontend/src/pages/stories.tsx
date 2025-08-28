@@ -27,6 +27,8 @@ interface Post {
   authorProfilePicture?: string;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Stories() {
   const { user, token, loading } = useAuth();
   const [drafts, setDrafts] = useState<Post[]>([]);
@@ -49,14 +51,11 @@ export default function Stories() {
   const fetchDrafts = async () => {
     try {
       if (!user) return;
-      const res = await axios.get(
-        `http://localhost:3000/api/users/drafts/${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${API_BASE_URL}/users/drafts/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDrafts(res.data);
     } catch (err) {
       toast.error('Error fetching drafts');
@@ -67,7 +66,7 @@ export default function Stories() {
     try {
       if (!user) return;
       const res = await axios.get(
-        `http://localhost:3000/api/users/published/${user.id}`,
+        `${API_BASE_URL}/users/published/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,7 +81,7 @@ export default function Stories() {
 
   const handleDelete = async (id: number, type: 'draft' | 'published') => {
     try {
-      await axios.delete(`http://localhost:3000/api/posts/${id}`, {
+      await axios.delete(`${API_BASE_URL}/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Post deleted successfully!');

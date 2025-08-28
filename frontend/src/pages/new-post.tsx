@@ -28,6 +28,7 @@ const postSchema = z.object({
   coverPhoto: z.array(z.instanceof(File)).min(1, 'Cover photo is required'),
   markdown: z.string().min(1, 'Content cannot be empty'),
 });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type PostFormData = z.infer<typeof postSchema>;
 
@@ -77,23 +78,15 @@ export default function NewPost() {
 
     try {
       if (submitMode === 'draft') {
-        await axios.post(
-          `http://localhost:3000/api/posts?status=draft`,
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await axios.post(`${API_BASE_URL}/posts?status=draft`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         toast.success('Draft saved successfully!');
         navigate('/me/stories');
       } else {
-        await axios.post(
-          `http://localhost:3000/api/posts?status=published`,
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await axios.post(`${API_BASE_URL}/posts?status=published`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         toast.success('Post published successfully!');
         navigate('/me/stories');
       }
