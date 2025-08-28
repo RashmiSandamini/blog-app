@@ -33,15 +33,15 @@ This is Phase 1 of the application, where a single admin manages all posts. User
 
 ## 🧰 Tech Stack
 
-| Layer       | Technology                |
-| ----------- | ------------------------- |
+| Layer       | Technology                           |
+| ----------- | ------------------------------------ |
 | Frontend    | React, Vite, Tailwind CSS, shadcn UI |
-| Backend     | Node.js, Express.js       |
-| Database    | MySQL                     |
-| Auth        | JWT, bcrypt               |
-| Forms       | React Hook Form, Zod      |
-| HTTP        | Axios                     |
-| Text Editor | MDXEditor                 |
+| Backend     | Node.js, Express.js                  |
+| Database    | MySQL                                |
+| Auth        | JWT, bcrypt                          |
+| Forms       | React Hook Form, Zod                 |
+| HTTP        | Axios                                |
+| Text Editor | MDXEditor                            |
 
 ---
 
@@ -150,10 +150,6 @@ Password = 1234
 - Raw SQL queries are used instead of an ORM like Sequelize, which will be integrated in future updates.
 - No support for multiple admin accounts or user roles at this time.
 
-
 ## 📍 Watch the Demonstration
 
 [Watch the demo video](https://drive.google.com/file/d/1u0xJNE6xxBwgEZtw1dYGLnDNJ9X0zCfa/view?usp=sharing)
-
-
-
