@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import axios from 'axios';
-import { useAuth } from '../context/auth-context';
 import Header from '../components/header';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -32,7 +31,7 @@ export default function PostDetails() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>();
   const [errorMessage, setErrorMessage] = useState('');
-  const { user, loading: authLoading } = useAuth();
+  // const { user, loading: authLoading } = useAuth();
 
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 

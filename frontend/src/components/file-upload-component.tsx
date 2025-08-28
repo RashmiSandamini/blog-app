@@ -9,7 +9,7 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from '../components/ui/file-upload';
-import { Upload, X } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import * as React from 'react';
 
 export function FileUploadComponent({

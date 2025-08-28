@@ -52,7 +52,7 @@ export default function EditPost() {
     reset,
     setValue,
     setError,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {

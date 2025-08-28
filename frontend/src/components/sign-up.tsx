@@ -39,7 +39,7 @@ export function SignUpForm() {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, data, {
+      await axios.post(`${API_BASE_URL}/auth/register`, data, {
         headers: {
           'Content-Type': 'application/json',
         },
