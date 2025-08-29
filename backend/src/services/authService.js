@@ -1,34 +1,47 @@
 import bcrypt from 'bcryptjs';
-import pool from '../database.js';
 import jwt from 'jsonwebtoken';
+import User from '../models/user.js';
 
 export const checkUserExistsByEmail = async (email) => {
-  const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [
-    email,
-  ]);
-  if (rows.length > 0) {
-    return rows[0];
+  try {
+    const user = await User.findOne({
+      where: { email },
+    });
+    return user || null;
+  } catch (error) {
+    console.error('Error checking user by email:', error.message);
+    throw error;
   }
-  return null;
 };
 
 export const checkUserExists = async (username) => {
-  const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [
-    username,
-  ]);
-  if (rows.length > 0) {
-    return rows[0];
+  try {
+    const user = await User.findOne({
+      where: {
+        username,
+      },
+    });
+    return user || null;
+  } catch (error) {
+    console.error('Error checking user by username: ', error.message);
   }
-  return null;
 };
 
 export const createUser = async (username, email, password) => {
-  const hashedPassword = await bcrypt.hash(password, 8);
-  const [result] = await pool.query(
-    'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-    [username, email, hashedPassword]
-  );
-  return result.insertId;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    return newUser.id;
+  } catch (err) {
+    console.error('Error creating user:', err.message);
+    throw err;
+  }
 };
 
 export const comparePassword = async (givenPassword, storedHashedPassword) => {

@@ -1,14 +1,24 @@
-import pool from '../database.js';
+import Post from '../models/post.js';
+import User from '../models/user.js';
 
 export const getAll = async () => {
   try {
-    const [rows] = await pool.query(`
-      SELECT posts.*, users.username
-      FROM posts
-      JOIN users ON posts.user_id = users.id
-      WHERE posts.is_published = 1
-    `);
-    const posts = rows.map((post) => {
+    const postsResults = await Post.findAll({
+      where: {
+        is_published: true,
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    if (postsResults.length === 0) return null;
+    const posts = postsResults.map((post) => {
       if (post.cover_photo) {
         const base64Image = Buffer.from(post.cover_photo).toString('base64');
         post.cover_photo = `data:image/jpeg;base64,${base64Image}`;
@@ -24,16 +34,17 @@ export const getAll = async () => {
 
 export const getById = async (id) => {
   try {
-    const [rows] = await pool.query(
-      `SELECT 
-         posts.*, 
-         users.username 
-       FROM posts 
-       JOIN users ON posts.user_id = users.id 
-       WHERE posts.id = ?`,
-      [id]
-    );
-    const post = rows[0];
+    const post = await Post.findOne({
+      where: { id },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
 
     if (!post) return null;
 
@@ -50,25 +61,6 @@ export const getById = async (id) => {
   }
 };
 
-export const create = async (data) => {
-  const { title, desc, img, uid } = data;
-  const date = new Date();
-  const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
-  const [result] = await pool.query(
-    `INSERT INTO posts (title, \`desc\`, img, date, uid) VALUES (?, ?, ?, ?, ?)`,
-    [title, desc, img, formattedDate, uid]
-  );
-
-  return {
-    id: result.insertId,
-    title,
-    desc,
-    img,
-    formattedDate,
-    uid,
-  };
-};
-
 export const createNewPost = async ({
   title,
   subtitle,
@@ -81,17 +73,34 @@ export const createNewPost = async ({
     throw new Error('Cover photo is required');
   }
 
-  await pool.execute(
-    'INSERT INTO posts (title, subtitle, content, cover_photo, user_id, is_published) VALUES (?, ?, ?, ?, ?, ?)',
-    [title, subtitle, markdown, coverPhotoBuffer, userId, isPublished]
-  );
+  try {
+    await Post.create({
+      title,
+      subtitle,
+      content: markdown,
+      cover_photo: coverPhotoBuffer,
+      user_id: userId,
+      is_published: isPublished,
+    });
 
-  return { message: 'Post created successfully' };
+    return { message: 'Post created successfully' };
+  } catch (error) {
+    console.error('Error creating post: ', error.message);
+    throw error;
+  }
 };
 
 export const deleteById = async (id) => {
-  const [result] = await pool.query('DELETE FROM posts WHERE id = ?', [id]);
-  return result.affectedRows > 0;
+  try {
+    const deletedCount = await Post.destroy({
+      where: { id },
+    });
+
+    return deletedCount > 0;
+  } catch (error) {
+    console.error('Error deleting post: ', error.message);
+    throw error;
+  }
 };
 
 export const updateById = async (
@@ -101,20 +110,31 @@ export const updateById = async (
   userId,
   isPublished
 ) => {
-  const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
-  if (rows.length === 0) return null;
-  const { title, subtitle, markdown } = data;
-  if (!coverPhotoBuffer) {
-    const [result] = await pool.query(
-      'UPDATE posts SET title = ?, subtitle = ?, content = ?, user_id=?, is_published=? WHERE id = ?',
-      [title, subtitle, markdown, userId, isPublished, id]
-    );
-    return result.affectedRows > 0;
-  } else {
-    const [result] = await pool.query(
-      'UPDATE posts SET title = ?, subtitle = ?, content = ?, cover_photo = ?, user_id=?, is_published=? WHERE id = ?',
-      [title, subtitle, markdown, coverPhotoBuffer, userId, isPublished, id]
-    );
-    return result.affectedRows > 0;
+  try {
+    const post = await Post.findByPk(id);
+    if (!post) return null;
+
+    const { title, subtitle, markdown } = data;
+
+    const updateData = {
+      title,
+      subtitle,
+      content: markdown,
+      user_id: userId,
+      is_published: isPublished,
+    };
+
+    if (coverPhotoBuffer) {
+      updateData.cover_photo = coverPhotoBuffer;
+    }
+
+    const [updatedCount] = await Post.update(updateData, {
+      where: { id },
+    });
+
+    return updatedCount > 0;
+  } catch (error) {
+    console.error('Error updating post: ', err.message);
+    throw error;
   }
 };
