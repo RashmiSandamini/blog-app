@@ -61,7 +61,6 @@ export default function PostDetails() {
 
     fetchPost();
   }, [id]);
-  if (!post) return <div className='text-center mt-10'>Loading...</div>;
   if (!post) return <div className='text-center mt-10'>{errorMessage}</div>;
 
   return (
