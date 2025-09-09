@@ -2,7 +2,7 @@
 
 A full-stack blog platform with an **Admin Panel** to manage blog posts and a **User Interface** for readers to browse and view content.
 
-This is Phase 1 of the application, where a single admin manages all posts. User registration functionality is present in the codebase but will be included in the next phase, where admins will also have the ability to manage users and assign roles (admin/user).
+This is Phase 2 of the application, currently under development, where a single admin manages all posts. In this phase, the backend has been updated to use Sequelize ORM for database management, and user registration and multi admin funtionality are planned to be implemented soon.
 
 ---
 
@@ -26,7 +26,7 @@ This is Phase 1 of the application, where a single admin manages all posts. User
 
 - RESTful API using Express.js
 - Authentication with JSON Web Tokens (JWT)
-- MySQL database
+- MySQL database managed with Sequelize ORM
 - Secure password storage using bcrypt
 
 ---
@@ -36,7 +36,7 @@ This is Phase 1 of the application, where a single admin manages all posts. User
 | Layer       | Technology                           |
 | ----------- | ------------------------------------ |
 | Frontend    | React, Vite, Tailwind CSS, shadcn UI |
-| Backend     | Node.js, Express.js                  |
+| Backend     | Node.js, Express.js, Sequelize ORM   |
 | Database    | MySQL                                |
 | Auth        | JWT, bcrypt                          |
 | Forms       | React Hook Form, Zod                 |
@@ -81,25 +81,25 @@ npm run start:dev
 
 ### 3. Setup the Databse
 
-Make sure you have MySQL installed and import the SQL dump provided in the folder `blog_app.sql` by following one of the methods below.
+Make sure you have MySQL installed and running.
 
-#### Option 1: Using Command Line
+#### 1: Create the database (schema) manually
 
-1. Create the database by running:
+```bash
+ CREATE DATABASE blog_app;
+```
 
-   ```bash
-    CREATE DATABASE blog_app;
-   ```
+Or from the command line:
 
-2. Import the SQL dump by running this command in your terminal (navigate to the folder containing `blog_app.sql`):
+```bash
+ mysql -u <YOUR_MYSQL_USER> -p -e "CREATE DATABASE blog_app;"
+```
 
-   ```bash
-    mysql -u <YOUR_MYSQL_USER> -p blog_app < blog_app.sql
-   ```
+Replace <YOUR_MYSQL_USER> with your MySQL username (e.g., root). Enter your password when prompted.
 
-   Replace <YOUR_MYSQL_USER> with your MySQL username (e.g., root). Enter your password when prompted.
+#### 2: (Optional) Import sample data
 
-#### Option 2: Using MySQL Workbench
+You can import sample data provided in `blog_app.sql` file using MySQL Workbench like below,
 
 1. Open MySQL Workbench and connect to your MySQL server.
 2. Create a new schema (database) named `blog_app`.
@@ -107,6 +107,12 @@ Make sure you have MySQL installed and import the SQL dump provided in the folde
 4. Select `Import from Self-Contained File` and choose the `blog_app.sql` file.
 5. Select the `blog_app` schema as the default target schema.
 6. Click `Start Import` to load the data.
+
+Or from the command line:
+
+```bash
+mysql -u <YOUR_MYSQL_USER> -p blog_app < blog_app.sql
+```
 
 ### 4. Setup the Frontend
 
@@ -147,7 +153,6 @@ Password = 1234
 
 ### Limitations
 
-- Raw SQL queries are used instead of an ORM like Sequelize, which will be integrated in future updates.
 - No support for multiple admin accounts or user roles at this time.
 
 ## 📍 Watch the Demonstration
