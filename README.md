@@ -2,7 +2,9 @@
 
 A full-stack blog platform with an **Admin Panel** to manage blog posts and a **User Interface** for readers to browse and view content.
 
-This is Phase 2 of the application, currently under development, where a single admin manages all posts. In this phase, the backend has been updated to use Sequelize ORM for database management, and user registration and multi admin funtionality are planned to be implemented soon.
+This is Phase 2 of the application, currently under development. The backend has been updated to use Sequelize ORM for database management, and user registration is now enabled, allowing multiple users to create accounts.
+
+The platform supports multi-admin functionality. However, by default, all new users are assigned the reader role. Functionality to promote readers to editors or admins is not yet implemented, and will be added in future updates.
 
 ---
 
