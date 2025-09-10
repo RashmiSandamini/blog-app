@@ -35,6 +35,7 @@ export const createUser = async (username, email, password) => {
       username,
       email,
       password: hashedPassword,
+      role: 'reader',
     });
 
     return newUser.id;
@@ -48,7 +49,12 @@ export const comparePassword = async (givenPassword, storedHashedPassword) => {
   return bcrypt.compare(givenPassword, storedHashedPassword);
 };
 
-export const generateToken = (userId, email) => {
-  const payload = { userId, email };
+export const generateToken = (user) => {
+  const payload = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+  };
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 };

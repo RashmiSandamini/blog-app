@@ -41,7 +41,7 @@ export const createNewPost = async (req, res) => {
   try {
     const { title, subtitle, markdown } = req.body;
     const coverPhotoBuffer = req.file?.buffer;
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const status = req.query.status;
     const isPublished = status === 'published' ? 1 : 0;
@@ -96,7 +96,7 @@ export const deletePost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   try {
     const id = parseInt(req.params.id);

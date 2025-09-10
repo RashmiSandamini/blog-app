@@ -2,7 +2,7 @@ import * as userService from '../services/userService.js';
 
 export const getUser = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const user = await userService.getUser(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

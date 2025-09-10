@@ -30,7 +30,7 @@ const seedAdmin = async () => {
       username: 'admin',
       email: 'admin@gmail.com',
       password: await bcrypt.hash('1234', 8),
-      is_admin: true,
+      role: 'admin',
     });
     console.log('Admin user created');
   }

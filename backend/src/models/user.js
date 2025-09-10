@@ -21,9 +21,9 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    is_admin: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'reader',
     },
   },
   {
