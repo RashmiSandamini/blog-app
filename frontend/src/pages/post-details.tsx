@@ -45,7 +45,6 @@ export default function PostDetails() {
       try {
         const postRes = await axios.get(`${API_BASE_URL}/posts/${id}`);
         setPost(postRes.data);
-        console.log(post?.title);
       } catch (error) {
         let message = 'Something went wrong';
         if (axios.isAxiosError(error)) {
@@ -63,15 +62,10 @@ export default function PostDetails() {
 
     fetchPost();
   }, [id]);
-
-  useEffect(() => {
-    console.log('Post updated:', post);
-  }, [post]);
   if (!post) return <div className='text-center mt-10'>{errorMessage}</div>;
 
   return (
     <>
-      {/* <Header setIsSignInOpen={setIsSignInOpen} /> */}
       <div className='max-w-3xl mx-auto mt-10 px-4 pb-10'>
         <h1 className='text-4xl font-bold mb-2 text-gray-800'>{post.title}</h1>
         <h2 className='text-sm mb-4 text-gray-600'>{post.subtitle}</h2>

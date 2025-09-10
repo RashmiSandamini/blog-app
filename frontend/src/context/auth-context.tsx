@@ -86,7 +86,6 @@ export const decodeToken = (token: string): User | null => {
       email: string;
       role: 'admin' | 'editor' | 'reader';
     }>(token);
-    console.log(decoded);
     return {
       id: decoded.id,
       username: decoded.username,

@@ -99,7 +99,7 @@ function App() {
               Create your account to start exploring stories and sharing yours.
             </DialogDescription>
           </DialogHeader>
-          <SignUpForm />
+          <SignUpForm switchToSignIn={switchToSignIn} />
           <p className='text-sm text-center mt-4 text-muted-foreground'>
             Already have an account?{' '}
             <span

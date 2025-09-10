@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 
 const formSchema = z.object({
-  // email: z.email({ message: 'Enter a valid email address' }),
   username: z.string().nonempty({ message: 'Username is required' }),
   password: z.string().nonempty({ message: 'Password is required' }),
 });
@@ -54,6 +53,9 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       <div>
+        <label htmlFor='username' className='text-sm'>
+          Username
+        </label>
         <Input {...register('username')} placeholder='Username' />
         {errors.username && (
           <p className='text-sm text-red-500'>{errors.username.message}</p>
@@ -61,6 +63,9 @@ export function SignInForm({ closeDialog }: { closeDialog?: () => void }) {
       </div>
 
       <div>
+        <label htmlFor='password' className='text-sm'>
+          Password
+        </label>
         <Input
           {...register('password')}
           type='password'

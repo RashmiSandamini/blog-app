@@ -14,26 +14,42 @@ import {
 } from './ui/form';
 import { Input } from './ui/input';
 
-const SignUpSchema = z.object({
-  email: z.email({ message: 'Enter a valid email address.' }),
-  username: z
-    .string()
-    .min(3, { message: 'Username must be at least 3 characters long.' }),
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least 6 characters long.' }),
-});
+const SignUpSchema = z
+  .object({
+    email: z.email({ message: 'Enter a valid email address.' }),
+    username: z
+      .string()
+      .min(3, { message: 'Username must be at least 3 characters long.' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters long.' })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/,
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+      ),
+    cpassword: z.string(),
+  })
+  .refine((data) => data.password === data.cpassword, {
+    message: 'Passwords do not match.',
+    path: ['cpassword'],
+  });
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type SignUpFormData = z.infer<typeof SignUpSchema>;
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  switchToSignIn: () => void;
+}
+
+export function SignUpForm({ switchToSignIn }: SignUpFormProps) {
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
       email: '',
       username: '',
       password: '',
+      cpassword: '',
     },
   });
 
@@ -45,12 +61,12 @@ export function SignUpForm() {
         },
       });
       toast.success('Account created successfully!');
+      switchToSignIn();
     } catch (error: any) {
       if (error.response && error.response.status === 409) {
-        toast.error('User already exists. Please login.');
+        toast.error(error.response.data.message);
       } else {
         toast.error('Network error. Try again later.');
-        console.error('Signup error:', error);
       }
     }
   };
@@ -58,19 +74,6 @@ export function SignUpForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='Email address' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name='username'
@@ -84,6 +87,21 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder='Email address' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name='password'
@@ -97,6 +115,25 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name='cpassword'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  type='password'
+                  placeholder='Confirm Password'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type='submit' className='w-full'>
           Sign Up
         </Button>

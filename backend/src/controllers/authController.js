@@ -4,9 +4,14 @@ export const register = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const userExists = await authService.checkUserExists(email);
-    if (userExists) {
-      return res.status(409).json({ message: 'User already exists' });
+    const usernameExists = await authService.checkUserExists(username);
+    const emailExists = await authService.checkUserExistsByEmail(email);
+    if (usernameExists) {
+      return res.status(409).json({ message: 'Username already exists' });
+    }
+
+    if (emailExists) {
+      return res.status(409).json({ message: ' Email already exists' });
     }
 
     await authService.createUser(username, email, password);
