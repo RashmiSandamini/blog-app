@@ -5,12 +5,13 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 interface User {
   id: number;
   username: string;
   email: string;
+  role: 'admin' | 'editor' | 'reader';
   profilePicture?: string;
 }
 
@@ -21,9 +22,9 @@ interface AuthContextType {
   logout: () => void;
   setToken: (token: string | null) => void;
 }
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(() =>
@@ -32,37 +33,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) {
-        setUser(null);
-        setLoading(false);
-        return;
-      } else {
-        setLoading(true);
-        try {
-          const res = await axios.get(`${API_BASE_URL}/users`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(res.data);
-        } catch (err) {
-          console.error('Error fetching user:', err);
-          logout();
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchUser();
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const decodedUser = decodeToken(token);
+    if (decodedUser) {
+      setUser(decodedUser);
+    } else {
+      logout();
+    }
+    setLoading(false);
   }, [token]);
 
   const setToken = (newToken: string | null) => {
     if (newToken) {
       localStorage.setItem('token', newToken);
+      const decodedUser = decodeToken(newToken);
+      if (decodedUser) setUser(decodedUser);
     } else {
       localStorage.removeItem('token');
+      setUser(null);
     }
     setTokenState(newToken);
   };
@@ -83,4 +76,25 @@ export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
+};
+
+export const decodeToken = (token: string): User | null => {
+  try {
+    const decoded = jwtDecode<{
+      id: number;
+      username: string;
+      email: string;
+      role: 'admin' | 'editor' | 'reader';
+    }>(token);
+    console.log(decoded);
+    return {
+      id: decoded.id,
+      username: decoded.username,
+      email: decoded.email,
+      role: decoded.role,
+      profilePicture: '',
+    };
+  } catch {
+    return null;
+  }
 };

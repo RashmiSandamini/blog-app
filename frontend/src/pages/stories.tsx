@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/header';
 import {
   Tabs,
   TabsContent,
@@ -99,7 +98,7 @@ export default function Stories() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className=' mt-12 sm:pl-28 sm:pr-28'>
         <div className='flex justify-between items-center'>
           <h1 className='text-4xl font-bold mb-4 text-gray-800'>Your Posts</h1>

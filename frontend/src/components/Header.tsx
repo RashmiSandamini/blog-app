@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
+import { Button } from './ui/button';
 
 interface HeaderProps {
   setIsSignInOpen?: (value: boolean) => void;
@@ -16,8 +17,9 @@ interface HeaderProps {
 
 export default function Header({
   setIsSignInOpen,
+  openGetStartedDialog,
 }: // openWriteDialog,
-// openGetStartedDialog,
+
 HeaderProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ HeaderProps) {
     logout();
     navigate('/');
   };
+
   return (
     <div className='shadow-md rounded-3xl bg-white sticky  top-0 z-50'>
       <header className='w-full flex items-center justify-between sm:py-4 sm:p-10 py-3 p-5'>
@@ -53,19 +56,6 @@ HeaderProps) {
             </li> */}
 
             {user ? (
-              // <li className='cursor-pointer hover:text-primary'>
-              //   <Avatar className='size-10'>
-              //     <AvatarImage
-              //       src={
-              //         user?.profilePicture || 'https://github.com/shadcn.png'
-              //       }
-              //       alt='@avatar'
-              //     />
-              //     <AvatarFallback className='text-xs'>
-              //       {user?.username?.[0]?.toUpperCase()}
-              //     </AvatarFallback>
-              //   </Avatar>
-              // </li>
               <>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -88,12 +78,14 @@ HeaderProps) {
                       Signed in as <span className=''>{user?.username}</span>
                     </div>
 
-                    <DropdownMenuItem
-                      onClick={() => navigate('/me/stories')}
-                      className='justify-center'
-                    >
-                      Stories
-                    </DropdownMenuItem>
+                    {(user?.role === 'admin' || user?.role === 'editor') && (
+                      <DropdownMenuItem
+                        onClick={() => navigate('/me/stories')}
+                        className='justify-center'
+                      >
+                        Stories
+                      </DropdownMenuItem>
+                    )}
 
                     <DropdownMenuItem
                       className='justify-center'
@@ -114,14 +106,14 @@ HeaderProps) {
                     Login
                   </button>
                 </li>
-                {/* <li className='cursor-pointer hover:text-primary'>
+                <li className='cursor-pointer hover:text-primary'>
                   <Button
                     className='rounded-full cursor-pointer'
                     onClick={() => openGetStartedDialog?.()}
                   >
                     Get Started
                   </Button>
-                </li> */}
+                </li>
               </>
             )}
           </ul>

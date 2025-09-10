@@ -6,7 +6,6 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { FileUploadComponent } from '../components/file-upload-component';
-import Header from '../components/header';
 import {
   MDXEditor,
   headingsPlugin,
@@ -154,7 +153,7 @@ export default function EditPost() {
   if (loading || !user) return null;
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='max-w-3xl mx-auto px-4 py-12 space-y-8'
